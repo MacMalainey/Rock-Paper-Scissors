@@ -32,7 +32,7 @@ const int rockP = 2;     // the number of the pushbutton pin
 const int scissorsP = 4;     // the number of the pushbutton pin
 const int paperP = 3;     // the number of the pushbutton pin
 const int ledPin =  13;      // the number of the LED pin
-
+byte x = 0;
 // variables will change:
 int rockState = 0;         // variable for reading the pushbutton status
 int scissorsState = 0;         // variable for reading the pushbutton status
@@ -44,9 +44,46 @@ void setup() {
   pinMode(scissorsP, INPUT_PULLUP);
   Wire.begin();
   Serial.begin(9600);
+  Wire.beginTransmission(8);
+  x = 4;
+  Wire.write(x);
+  Wire.endTransmission();
+  
 }
-byte x = 0;
+
 void loop() {
+  prepare();
+  readbutton();
+  
+}
+int y;
+int P = 0;
+void prepare()
+{
+  switch (P)
+  {
+    case (0):
+    P++;
+    break;
+    case (1):
+    Serial.println("P1 pressed");
+    Serial.println(x);
+    P++;
+    break;
+    case (2):
+    Serial.println("P2 pressed");
+    Serial.println(x);
+    P++;
+    Serial.println("GAME OVER");
+    break;
+  }
+  
+}
+void readbutton()
+{
+  y = 1;
+  do
+  {
   // read the state of the pushbutton value:
   rockState = digitalRead(rockP);
   scissorsState = digitalRead(scissorsP);
@@ -60,6 +97,7 @@ void loop() {
     Wire.write(x);              // sends one byte
     Wire.endTransmission();    // stop transmitting
     Serial.println("rock");
+    y = 0;
   } 
   else if (paperState == LOW)
   {
@@ -68,6 +106,7 @@ void loop() {
     Wire.write(x);              // sends one byte
     Wire.endTransmission();    // stop transmitting
     Serial.println("paper");
+    y = 0;
   }
   else if (scissorsState == LOW)
   {
@@ -76,6 +115,11 @@ void loop() {
     Wire.write(x);              // sends one byte
     Wire.endTransmission();    // stop transmitting
     Serial.println("scissors");
+    y = 0;
   }
-  delay(50);
+  } while (y != 0);
+  delay(1000);
 }
+
+
+

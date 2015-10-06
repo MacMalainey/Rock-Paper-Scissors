@@ -51,6 +51,12 @@ void receiveEvent(int howMany) {
       case (3):
       res = "scissors";
       break;
+      case (4):
+      res = "P1 Turn";
+      break;
+      case (5);
+      res = "P2 Turn";
+      break;
     }
     lcd.setCursor(0, 0);// print the character
     lcd.clear();
