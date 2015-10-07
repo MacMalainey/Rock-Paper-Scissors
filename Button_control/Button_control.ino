@@ -25,7 +25,8 @@
 
  http://www.arduino.cc/en/Tutorial/Button
  */
-
+int y;
+int P;
 // constants won't change. They're used here to
 // set pin numbers:
 const int rockP = 2;     // the number of the pushbutton pin
@@ -37,6 +38,8 @@ byte x = 0;
 int rockState = 0;         // variable for reading the pushbutton status
 int scissorsState = 0;         // variable for reading the pushbutton status
 int paperState = 0;         // variable for reading the pushbutton status
+int P1;
+int P2;
 void setup() {
   // initialize the pushbutton pin as an input:
   pinMode(rockP, INPUT_PULLUP);
@@ -48,7 +51,9 @@ void setup() {
   x = 4;
   Wire.write(x);
   Wire.endTransmission();
-  
+  P = 0;
+  P1 = 0;
+  P2 = 0;
 }
 
 void loop() {
@@ -56,8 +61,8 @@ void loop() {
   readbutton();
   
 }
-int y;
-int P = 0;
+
+
 void prepare()
 {
   switch (P)
@@ -66,15 +71,64 @@ void prepare()
     P++;
     break;
     case (1):
-    Serial.println("P1 pressed");
-    Serial.println(x);
+    Wire.beginTransmission(8);
+    x = 5;
+    Wire.write(x);
+    Wire.endTransmission();
     P++;
     break;
     case (2):
-    Serial.println("P2 pressed");
-    Serial.println(x);
     P++;
-    Serial.println("GAME OVER");
+    Wire.beginTransmission(8);
+    x = 6;
+    Wire.write(x);
+    if (P1 == 3)
+      {
+        switch (P2)
+        {
+        case (1):
+        x = 2;
+        break;
+        case (2):
+        x = 1;
+        break;
+        case (3):
+        x = 3;
+        break;
+        }
+      }
+   else if (P1 == 2)
+     {
+       switch (P2)
+        {
+        case (1):
+        x = 1;
+        break;
+        case (2):
+        x = 3;
+        break;
+        case (3):
+        x = 2;
+        break;
+        }
+     }
+    else if (P1 == 1)
+     {
+       switch (P2)
+        {
+        case (1):
+        x = 3;
+        break;
+        case (2):
+        x = 2;
+        break;
+        case (3):
+        x = 1;
+        break;
+        }
+     }
+    Wire.write(x);
+    Wire.endTransmission();
     break;
   }
   
@@ -92,30 +146,45 @@ void readbutton()
   // if it is, the buttonState is HIGH:
   if (rockState == LOW) 
   {
-    Wire.beginTransmission(8); // transmit to device #8
     x = 1;
-    Wire.write(x);              // sends one byte
-    Wire.endTransmission();    // stop transmitting
     Serial.println("rock");
     y = 0;
+    if (P1 == 0)
+    {
+      P1 = x;
+    }
+    else
+    {
+    P2 = x;
+    }
   } 
   else if (paperState == LOW)
   {
-    Wire.beginTransmission(8); // transmit to device #8
     x = 2;
-    Wire.write(x);              // sends one byte
-    Wire.endTransmission();    // stop transmitting
     Serial.println("paper");
     y = 0;
+    if (P1 == 0)
+    {
+      P1 = x;
+    }
+    else
+    {
+    P2 = x;
+    }
   }
   else if (scissorsState == LOW)
   {
-    Wire.beginTransmission(8); // transmit to device #8
     x = 3;
-    Wire.write(x);              // sends one byte
-    Wire.endTransmission();    // stop transmitting
     Serial.println("scissors");
     y = 0;
+    if (P1 == 0)
+    {
+      P1 = x;
+    }
+    else
+    {
+    P2 = x;
+    }
   }
   } while (y != 0);
   delay(1000);

@@ -34,31 +34,44 @@ void setup() {
 void loop() {
   delay(1000);
 }
-
 // function that executes whenever data is received from master
 // this function is registered as an event, see setup()
 void receiveEvent(int howMany) {
     byte c = Wire.read(); // receive byte as a character
     Serial.println(c);
     String res;
+    String bob;
     switch (c) {
-      case (1):
-      res = "rock";
-      break;
-      case (2):
-      res = "paper";
-      break;
-      case (3):
-      res = "scissors";
-      break;
       case (4):
       res = "P1 Turn";
+      lcd.setCursor(0, 0);
+      lcd.clear();
+      lcd.print(res);
       break;
-      case (5);
+      case (5):
       res = "P2 Turn";
+      lcd.setCursor(0, 0);
+      lcd.clear();
+      lcd.print(res);
+      break;
+      case (6):
+      lcd.setCursor(0, 0);
+      lcd.clear();
+      lcd.print("RESULTS:");
+      lcd.setCursor(0, 1);
+       int final = Wire.read();
+       if (final == 3)
+       {
+        lcd.print("TIE");
+       }
+       else if (final == 2)
+       {
+        lcd.print("P2 wins");
+       }
+       else if (final == 1)
+       {
+        lcd.print("P1 wins");
+       }
       break;
     }
-    lcd.setCursor(0, 0);// print the character
-    lcd.clear();
-    lcd.print(res);
 }
